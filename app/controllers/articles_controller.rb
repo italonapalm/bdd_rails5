@@ -35,7 +35,7 @@ class ArticlesController < ApplicationController
 
   def update
 
-    unless @article.user ==current_user
+    unless @article.user == current_user
       flash[:danger] = "You can only edit your own article."
       redirect_to root_path
     else
@@ -50,11 +50,17 @@ class ArticlesController < ApplicationController
   end
 
   def destroy
-    if @article.destroy
-      flash[:success] = "Article has been deleted"
-      redirect_to articles_path
+    unless @article.user == current_user
+      flash[:danger] = "You can only delete your own article."
+      redirect_to root_path
     else
-
+      if @article.destroy
+        flash[:success] = "Article has been deleted"
+        redirect_to articles_path
+      else
+        flash.now[:danger] = "Article has not been deleted"
+        render :edit
+      end
     end
 
   end
